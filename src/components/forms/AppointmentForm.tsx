@@ -22,6 +22,16 @@ import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { Form } from "../ui/form";
 
+type AppointmentProps = {
+  userId: string;
+  patient: string;
+  primaryPhysician: string;
+  schedule: Date;
+  reason: string;
+  status: Status;
+  note: string | undefined;
+};
+
 export const AppointmentForm = ({
   userId,
   patientId,
@@ -36,7 +46,7 @@ export const AppointmentForm = ({
   setOpen?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const AppointmentFormValidation = getAppointmentSchema(type);
 
@@ -92,8 +102,9 @@ export const AppointmentForm = ({
         }
       } else {
         const appointmentToUpdate = {
-          userId,
           appointmentId: appointment?.$id!,
+          userId,
+          timeZone: "EAT",
           appointment: {
             primaryPhysician: values.primaryPhysician,
             schedule: new Date(values.schedule),
@@ -102,6 +113,14 @@ export const AppointmentForm = ({
           },
           type,
         };
+
+        // export const updateAppointment = async ({
+        //   appointmentId,
+        //   userId,
+        //   timeZone,
+        //   appointment,
+        //   type,
+        // }: UpdateAppointmentParams) => {
 
         const updatedAppointment = await updateAppointment(appointmentToUpdate);
 
@@ -175,7 +194,9 @@ export const AppointmentForm = ({
             />
 
             <div
-              className={`flex flex-col gap-6  ${type === "create" && "xl:flex-row"}`}
+              className={`flex flex-col gap-6  ${
+                type === "create" && "xl:flex-row"
+              }`}
             >
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
@@ -210,7 +231,9 @@ export const AppointmentForm = ({
 
         <SubmitButton
           isLoading={isLoading}
-          className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
+          className={`${
+            type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"
+          } w-full`}
         >
           {buttonLabel}
         </SubmitButton>
